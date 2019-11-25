@@ -68,7 +68,7 @@ clear
 echo -e "DONE"
 sleep 1
 clear
-echo -e "Open a NEW terminal and type 'sudo bootmiester' to launch the script"
-sleep 4
+echo -e "Installation is finished. Type 'sudo bootmiester' to launch the script after we exit."
+sleep 2
 exit
 
