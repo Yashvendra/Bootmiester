@@ -25,7 +25,7 @@ Make sure you run this tool as super user
 ```
 $ sudo bootmiester
 ```
-Then follow the instructions on the terminal screen.
+Then follow the instructions on the terminal screen. Also make sure to let the packet scanning run for a good 6-8 seconds then press `ctrl+c` to stop capturing.
 
 ### Uninstallation
 ```
