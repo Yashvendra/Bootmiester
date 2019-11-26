@@ -1,7 +1,7 @@
 <h1 align="center">BOOTMIESTER</h4>
 
 
-<h4 align="center">WIFI Connection Booster</h4>
+<h4 align="center">Advanced Deauthenticating Script</h4>
 <p align="center">
   <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&label=Contributions&colorA=blue&colorB=black">
 </p>
@@ -25,7 +25,7 @@ Make sure you run this tool as super user
 ```
 $ sudo bootmiester
 ```
-Then follow the instructions on the terminal.
+Then follow the instructions on the terminal screen.
 
 ### Uninstallation
 ```
