@@ -1,5 +1,7 @@
 #!/bin/bash 
 
+white='\033[0;37m'
+NC='\033[0m'
 clear
 printf '\033]2; INSTALLER\a'
 echo -e "Press \e[1;33many key\e[0m to install the script..."
@@ -10,7 +12,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if [[ "$DIR" != "/root/bootmiester" ]]
 then
-	echo -e "You didn't follow the instructions, I will try to install it for you..."
+	echo -e "I will try to install it for you..."
 	sleep 4
 	if [[ -d /root/bootmiester ]]
 	then 
@@ -41,9 +43,9 @@ do
 	if [[ "$UORI" = "u" ]]
 	then 
 		clear 
-		echo -e "Type 'changelog' to see what's new on this version"
+		echo -e "This feature is currently under construction.."
 		sleep 3
-		break
+		exit
 	elif [[ "$UORI" = "i" ]]
 	then 
 		clear
@@ -64,10 +66,21 @@ do
 		break
 	fi
 done
-clear 
-echo -e "DONE"
-sleep 1
 clear
+sleep 1
+echo -e "${white}Installing Dependencies..."
+sleep 1
+echo -e "Installing xterm...${NC}"
+sleep 1
+sudo apt install -y xterm
+clear
+echo -e "${white}Installing 'lolcat' & 'aircrack-ng'..."
+sleep 1
+xterm +hold -e "sudo apt install -y lolcat"
+xterm +hold -e "sudo apt install -y aircrack-ng"
+echo -e "Done."
+sudo cp -r /usr/games/lolcat /bin/
+sleep 1
 echo -e "Installation is finished. Type 'sudo bootmiester' to launch the script after we exit."
 sleep 2
 exit
