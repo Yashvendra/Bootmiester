@@ -34,7 +34,9 @@ $ sudo ./uninstall.sh
 $ rm -rf /root/bootmiester
 ```
 
-##### Upcoming Feature: Will daemonize the attaking phase and perform some simple tweaks to clean the output.
+### Upcoming Feature
+Will daemonize the attaking phase and perform some simple tweaks to clean the output. Stay Tuned :)
+
 ##### Note: This script is made for educational purposes and to help security researchers. Any actions or activities performed using this script is solely your responsibility.
 
 
