@@ -16,11 +16,10 @@ PROCESS="xterm"
 
 clear
 echo -e "\tBOOTMIESTER\n\tBy: Yashvendra Kashyap\n\thttps://github.com/Yashvendra/Bootmiester" | boxes -d cat -a c | lolcat
-sleep 1
+sleep 0.5
 echo -e "\n${white}+-------------------------------------------------------------+"
 echo -e "+                The ${Green}BOOTMIESTER${white} welcomes you                 +"
 echo -e "${white}+-------------------------------------------------------------+${NC}" 
-sleep 2
 echo -ne "${Blue}Do you want to \e[0;37m(${Blue}p\e[0;37m)${Blue}roceed with the script or \e[0;37m(${Blue}q\e[0;37m)${Blue}quit \e[0;37m(${Blue}p/q\e[0;37m)${Blue}: \e[0;37m"
 read op
 
@@ -163,8 +162,15 @@ then
 		fi
 	done
 
-else
+elif [[ "$op" = "q" ]]
+then
 	echo -e "Byee! See you soon"
 	sleep 1
 	exit
+
+else
+	clear
+	echo -e "Wrong choice."
+	sleep 1
+	bootmiester
 fi
