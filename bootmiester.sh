@@ -32,7 +32,7 @@ then
 	mkdir ~/Desktop/MACS
 	echo -e "${Green}Starting Monitor Mode on "${interface}" ${NC}"
 	sleep 2
-	airmon-ng check kill && airmon-ng start ${interface}
+	airmon-ng check kill &>/dev/null && airmon-ng start ${interface} &>/dev/null
 	airodump-ng ${interface}mon -w ~/Desktop/wifi
 
 	clear
