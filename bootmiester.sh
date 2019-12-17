@@ -28,7 +28,7 @@ echo
 #echo -e "\n${white}+-------------------------------------------------------------+"
 #echo -e "+                The ${Green}BOOTMIESTER${white} welcomes you                 +"
 #echo -e "${white}+-------------------------------------------------------------+${NC}" 
-echo -ne "${Cyan}[#] Do you want to \e[0;37m(${Cyan}p\e[0;37m)${Cyan}roceed with the script or \e[0;37m(${Cyan}q\e[0;37m)${Cyan}quit \e[0;37m(${Cyan}p/q\e[0;37m)${Cyan}: \e[0;37m"
+echo -ne "${Blue}[#] Do you want to \e[0;37m(${Blue}p\e[0;37m)${Blue}roceed with the script or \e[0;37m(${Blue}q\e[0;37m)${Blue}quit \e[0;37m(${Blue}p/q\e[0;37m)${Blue}: \e[0;37m"
 read op
 if [[ "$op" = "p" ]]
 then
@@ -37,6 +37,7 @@ then
 	read interface
 
 	mkdir ~/Desktop/MACS
+	echo
 	echo -e "${Green}[*] Starting Monitor Mode on "${interface}" ${NC}"
 	sleep 2
 	airmon-ng check kill &>/dev/null && airmon-ng start ${interface} &>/dev/null
@@ -166,19 +167,22 @@ then
                                         break
                                 fi
                         done
+		else
+			echo -e "${Purple}[*] Wrong choice!"
+			sleep 0.3
+			x=2
 
 		fi
 	done
 
 elif [[ "$op" = "q" ]]
 then
-	echo -e "[*] Byee! See you soon"
+	echo -e "${Purple}[*] Byee! See you soon"
 	sleep 1
 	exit
 
 else
-	clear
-	echo -e "[*] Wrong choice."
+	echo -e "${Purple}[*] Wrong choice."
 	sleep 1
 	bootmiester
 fi
