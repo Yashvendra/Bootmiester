@@ -5,7 +5,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&label=Contributions&colorA=blue&colorB=black">
 </p>
-<p align="center"><a href="https://imgbb.com/"><img src="https://i.ibb.co/vkbZ0h2/Screenshot-from-2019-11-27-23-44-29.png" alt="Screenshot-from-2019-11-27-23-44-29" border="0"></a><br /><br />
+<p align="center"><a href="https://ibb.co/1mVmF97"><img src="https://i.ibb.co/jrKrnLb/Screenshot-from-2019-12-14-23-51-06.png" alt="Screenshot-from-2019-12-14-23-51-06" border="0"></a><br /><br />
 </p>
 Bootmiester is a light and fast shell script which is capable of deauthing connected devices from the access points within the range of your system's network adapter. 
 
